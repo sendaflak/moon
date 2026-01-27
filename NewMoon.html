@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة معايير رؤية الهلال</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f6; padding: 20px; direction: rtl; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #27ae60; padding-bottom: 10px; }
+        .section-title { background: #27ae60; color: white; padding: 8px 15px; border-radius: 5px; margin-top: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; background: #fff; }
+        button { 
+            grid-column: 1 / -1; 
+            padding: 12px 30px; 
+            background: #999; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 1.1em; 
+            transition: all 0.1s ease; 
+            
+            /* تصميم ثلاثي الأبعاد */
+            width: fit-content;      /* جعل العرض على قدر النص */
+            margin: 20px auto 0;    /* توسيط الزر */
+            box-shadow: 0 6px #1a252f; /* الظل السفلي ليعطي عمقاً */
+            display: block;
+        }
+
+        button:hover { 
+            background: #34495e; 
+            transform: translateY(-2px); /* رفعه قليلاً عند التمرير */
+            box-shadow: 0 8px #1a252f;
+        }
+
+        button:active { 
+            box-shadow: 0 2px #1a252f; /* تقليل الظل عند الضغط */
+            transform: translateY(4px);  /* تحريك الزر للأسفل عند الضغط */
+        }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .card { border: 1px solid #e0e0e0; padding: 15px; border-radius: 8px; background: #fafafa; }
+        .res-row { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #eee; }
+        .val { font-family: 'Courier New', monospace; font-weight: bold; color: #c0392b; }
+        .final-res { grid-column: 1 / -1; text-align: center; padding: 20px; border-radius: 10px; font-size: 1.5em; font-weight: bold; margin-top: 20px; }
+        .success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .logo-container {
+            display: flex;
+            justify-content: flex-start; /* يضمن التموضع يميناً لأن الاتجاه RTL */
+            margin-bottom: -40px; /* لسحب العنوان للأعلى قليلاً ومنع الفراغ الكبير */
+        }
+        .logo-container img {
+            max-width: 120px; /* يمكنك التحكم في حجم الشعار من هنا */
+            height: auto;
+            border-radius: 5px;
+        }
+        
+        /* تحسينات للهاتف */
+        @media (max-width: 600px) {
+            .logo-container { justify-content: center; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo-container">
+        <img src="logo.png" alt="Logo">
+    </div>
+
+    <h2>حاسبة معايير رؤية الهلال (حسابات ديناميكية 2026)</h2>
+
+    <div class="section-title">المدخلات الأساسية</div>
+    <div class="grid">
+        <div class="input-group"><label>خط العرض</label><input type="number" id="B2" value="21.4225" step="any" required></div>
+        <div class="input-group"><label>خط الطول</label><input type="number" id="B3" value="39.8262" step="any" required></div>
+        <div class="input-group"><label>فارق التوقيت</label><input type="number" id="B4" value="3" required></div>
+        <div class="input-group"><label>التاريخ </label><input type="date" id="B5date" required></div>
+    </div>
+
+    <div class="section-title">الحدود الدنيا للمعايير (Parameters)</div>
+    <div class="grid">
+        <div class="input-group"><label>أدنى ارتفاع للقمر (درجة)</label><input type="number" id="B151" value="0" step="any" required></div>
+        <div class="input-group"><label>أدنى استطالة (درجة)</label><input type="number" id="B152" value="0" step="any" required></div>
+        <div class="input-group"><label>أدنى عمر للقمر (ساعة)</label><input type="number" id="idB153" value="0" step="any" required></div>
+        <div class="input-group"><label>أدنى مكث للقمر (دقيقة)</label><input type="number" id="B154" value="0" step="any" required></div>
+        <button onclick="calculateAll()">احسب النتيجة الآن</button>
+    </div>
+
+    <div class="results-grid">
+        <div class="card">
+            <h3>بيانات الشمس والقمر</h3>
+            <div class="res-row"><span>غروب الشمس: </span> <span id="rB45" class="val">-</span></div>
+            <div class="res-row"><span>زاوية غروب الشمس (درجة): </span> <span id="rB52" class="val">-</span></div>
+            <div class="res-row"><span>زاوية القمر (درجة): </span> <span id="rB58" class="val">-</span></div>
+            <div class="res-row"><span>الاستطالة (درجة) (: </span> <span id="rB89" class="val">-</span></div>
+            <div class="res-row"><span>ارتفاع القمر عن الأفق (درجة): </span> <span id="rB56" class="val">-</span></div>
+        </div>
+        <div class="card">
+            <h3>المعايير المحسوبة</h3>
+            <div class="res-row"><span>الاقتران: </span> <span id="rB141" class="val">-</span></div>
+            <div class="res-row"><span>القمر يغيب بعد الشمس: </span> <span id="rB155" class="val">-</span></div>
+            <div class="res-row"><span>عمر القمر: </span> <span id="rB118" class="val">-</span></div>
+            <div class="res-row"><span>المكث: </span> <span id="rB120" class="val">-</span></div>
+            <div class="res-row"><span>الجزء المضاء (نسبة مئوية): </span> <span id="rB57" class="val">-</span></div>
+        </div>
+    </div>
+
+    <div id="finalResult" class="final-res" style="display:none;"></div>
+
+    <footer style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee; color: #7f8c8d; font-size: 0.9em;">
+        <p>
+            جميع الحقوق محفوظة © 2026 | 
+            <a href="https://www.youtube.com/@sendaflak7847/videos" target="_blank" style="color: #27ae60; text-decoration: none; font-weight: bold;">
+                قناة أفلاك العلمية
+            </a>
+        </p>
+    </footer>
+</div> <!-- نهاية الـ container -->
+
+
+<script src="newMoon.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<script src="newMoon.js"></script>
+</body>
+</html>
