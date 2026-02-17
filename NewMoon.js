@@ -109,7 +109,7 @@ function calculateAll() {
         secondColumn.querySelectorAll('.val').forEach(el => el.innerText = "-");
     } else {
         // عرض النتائج الطبيعية
-        document.getElementById('rB118').innerText = (B118 > 1 ? (INT(B118) + " يوم ") : "") + Math.round(MOD(B118, 1)*24) + " ساعة";
+        document.getElementById('rB118').innerText = (B118 > 1 ? (INT(B118) + " يوم ") : "") + Math.round(MOD(B118*10, 1)/10*24) + " ساعة";
         document.getElementById('rB120').innerText = (B120 * 60).toFixed(0) + " دقيقة";
         document.getElementById('rB57').innerText = B57.toFixed(1) + "%";
         document.getElementById('rB141').innerText = B141;
@@ -138,4 +138,5 @@ function calculateAll() {
     document.getElementById('rB89').innerText = B89.toFixed(1) + "°";
     document.getElementById('rB56').innerText = B56.toFixed(1) + "°";
 }
+
 
