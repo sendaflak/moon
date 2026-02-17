@@ -1,3 +1,9 @@
+/*
+حقوق الطبع محفوظة
+هذا الملف وكل ما يحتويه ملكية فكرية لقناة أفلاك العلمية
+ولا يسمح نسخها او اعادة استخدامها او تغييرها بدون إذن مسبق من القناة
+*/
+
 function calculateAll() {
     // 1. التحقق من تعبئة جميع المدخلات الإلزامية
     const inputs = document.querySelectorAll('input[required]');
@@ -28,7 +34,7 @@ function calculateAll() {
     const SQRT = Math.sqrt;
     const MOD = (n, m) => ((n % m) + m) % m;
 
-    // --- حسابات الشمس ---
+    // --- الحسابات التفصيلية ---
     const B14 = (12+B4-B3/15)/24;
     const B15 = B5+2415018.5+B14-B4/24;
     const B16 = (B15-2451545)/36525;
@@ -54,8 +60,6 @@ function calculateAll() {
     const B50 = (B49/4<0) ? (B49/4+180) : (B49/4-180);
     const B51 = deg*(Math.acos(Math.sin(rad*(B2))*Math.sin(rad*(B26))+Math.cos(rad*(B2))*Math.cos(rad*(B26))*Math.cos(rad*(B50))));
     const B52 = (B50>0) ? MOD(deg*(Math.acos(((Math.sin(rad*(B2))*Math.cos(rad*(B51)))-Math.sin(rad*(B26)))/(Math.cos(rad*(B2))*Math.sin(rad*(B51)))))+180, 360) : MOD(540-deg*(Math.acos(((Math.sin(rad*(B2))*Math.cos(rad*(B51)))-Math.sin(rad*(B26)))/(Math.cos(rad*(B2))*Math.sin(rad*(B51))))), 360);
-
-    // --- حسابات القمر ---
     const B59 = B5+2415018.5+B45-B4/24;
     const B60 = (B59-2451545)/36525;
     const B61 = MOD(280.46061837+360.98564736629*(B59-2451545)+0.000387933*Math.pow(B60,2)-Math.pow(B60,3)/38710000+B3, 360);
@@ -83,7 +87,6 @@ function calculateAll() {
     const B92 = Math.cos(rad*(B82))*Math.sin(rad*(B2)) - Math.tan(rad*(B80))*Math.cos(rad*(B2));
     const B93 = MOD(deg*(Math.atan2(B91,B92))+360, 360);
     const B58 = (B82>180) ? (B93-180) : (B93+180);
-    
     const B42 = MOD(deg*(Math.atan2(Math.cos(rad*(23.439))*Math.sin(rad*B88), Math.cos(rad*B88)))+360, 360);
     const B107 = B81*15;
     const B117 = B89/360*29.53;
@@ -92,17 +95,17 @@ function calculateAll() {
     const B120 = (B56+0.833)/Math.cos(rad*(B2))*24/(360-12.19);
     const B141 = (B57/100 < 0.1) ? (((B107 + ((B107 - B42 < -180) ? 360 : 0)) > B42) ? "نعم" : "لا") : "نعم";
     
-    // --- منطق العرض الجديد ---
+    // --- منطقة العرض  ---
     const finalDiv = document.getElementById('finalResult');
     const secondColumn = document.querySelectorAll('.card')[1]; // العمود الثاني (المعايير المحسوبة)
     finalDiv.style.display = "block";
 
-    // التحقق من عمر القمر (B117 هو العمر بالأيام)
+    // التحقق من عمر القمر 
     if (B117 >= 2 && B117 <= 28) {
         finalDiv.className = "final-res fail";
         finalDiv.innerText = "هذه الصفحة لحساب هلال اول الشهر";
         
-        // إخفاء نتائج العمود الثاني
+        // إخفاء النتائج
         secondColumn.querySelectorAll('.val').forEach(el => el.innerText = "-");
     } else {
         // عرض النتائج الطبيعية
@@ -112,11 +115,11 @@ function calculateAll() {
         document.getElementById('rB141').innerText = B141;
         document.getElementById('rB155').innerText = (B56 > 0.1) ? "نعم" : "لا";
 
-        const cond1 = B56 > B151;
+        const cond1 = B56 >= B151;
         const cond2 = B141 === "نعم";
-        const cond3 = B89 > B152;
-        const cond4 = B119 > B153;
-        const cond5 = B120*60 > B154;
+        const cond3 = B89 >= B152;
+        const cond4 = B119 >= B153;
+        const cond5 = B120*60 >= B154;
 
         if (cond1 && cond2 && cond3 && cond4 && cond5) {
             finalDiv.className = "final-res success";
@@ -127,7 +130,7 @@ function calculateAll() {
         }
     }
 
-    // تحديث بيانات العمود الأول دائماً
+    // تحديث بيانات العمود الأول 
     let B45date_obj = new Date(B45 * 86400*1000); 
     document.getElementById('rB45').innerText = B45date_obj.toISOString().substr(11, 8);
     document.getElementById('rB52').innerText = B52.toFixed(0) + "°";
@@ -135,3 +138,4 @@ function calculateAll() {
     document.getElementById('rB89').innerText = B89.toFixed(1) + "°";
     document.getElementById('rB56').innerText = B56.toFixed(1) + "°";
 }
+
